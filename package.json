@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/mbahenryemeka/tinyapp/issues"
   },
-  "homepage": "https://github.com/mbahenryemeka/tinyapp#readme"
+  "homepage": "https://github.com/mbahenryemeka/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
 }
