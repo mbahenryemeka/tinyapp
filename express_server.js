@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const bodyParser = require('body-parser');
 const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
@@ -9,6 +10,7 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com",
 };
 
+app.use (bodyParser.urlencoded({extended: true}));
 app.use(express.urlencoded({extended: true}));
 
 app.get('/urls/new', (req, res) =>{
@@ -44,16 +46,16 @@ function generateRandomString() {
   for (let i = 0; i<6; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
-  return;
+  return result;
 }
 
 
 app.post('/urls', (req, res) =>{
-  const shortURL = generateRandomString();
+  const shortURL = generateRandomString();  //  function to generate shortURL.
   const longURL = req.body.longURL;
-  console.log(`Short URL: ${shortURL} is mapped to Long URL: ${longURL}`);
-  //res.send("Short URL generated successfully!");
-})
+  urlDatabase[shortURL] = longURL;  //  save the key-value pair in the database.
+  res.redirect(`/urls/${shortURL}`); // redirect to the path where the short URL can be viewed. 
+  });
 
 
 
