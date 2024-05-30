@@ -34,16 +34,24 @@ app.get('/hello', (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-
+//  GET route that receives a POST request to /urls it responds with a redirection to /urls/:id.
+app.get('/urls/:id', (req, res) => {
+  const myID = req.params.id;
+  const longURL = urlDatabase[myID];
+  if (longURL) {
+    const templateVars = {id: myID, longURL: urlDatabase[myID]};
+    res.render('urls_shows', templateVars);
+  } else {
+    res.status(404).send('This short URL does not exist.');
+  }
+});
 
 //  POST route to handle the form submission.
 app.post('/urls', (req, res) =>{
-  console.log(req.body);
-  res.status(200).send('OK');
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = longURL; 
-  console.log(urlDatabase);
+  res.redirect(`/urls/${shortURL}`);
 });
 
 //  Generate a random strings
