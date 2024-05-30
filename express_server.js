@@ -42,6 +42,17 @@ app.post('/urls', (req, res) =>{
   res.status(200).send('OK');
 });
 
+//  Generate a random strings
+function generateRandomString() {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for (let i = 0; i<6; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
+
 //  GET route for the root path to send greetings to the browser.
 app.get("/", (req, res) => {
   res.send("Hello!");
