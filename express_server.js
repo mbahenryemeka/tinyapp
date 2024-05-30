@@ -40,6 +40,10 @@ app.get('/hello', (req, res) => {
 app.post('/urls', (req, res) =>{
   console.log(req.body);
   res.status(200).send('OK');
+  const longURL = req.body.longURL;
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = longURL; 
+  console.log(urlDatabase);
 });
 
 //  Generate a random strings
