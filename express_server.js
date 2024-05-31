@@ -46,6 +46,13 @@ app.get('/urls/:id', (req, res) => {
   }
 });
 
+//  GET route for shareable short url.
+app.get("/u/:id", (req, res) => {
+  const myID = req.params.id;
+  const longURL = urlDatabase[myID]
+  res.redirect(longURL);
+});
+
 //  POST route to handle the form submission.
 app.post('/urls', (req, res) =>{
   const longURL = req.body.longURL;
