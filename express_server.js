@@ -53,12 +53,27 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
+//  GET route for the root path to send greetings to the browser.
+app.get("/", (req, res) => {
+  res.send("Hello!");
+});
+
 //  POST route to handle the form submission.
 app.post('/urls', (req, res) =>{
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = longURL; 
   res.redirect(`/urls/${shortURL}`);
+});
+// POST route to delete short URL from the urlDatabase.
+app.post('/urls/:id/delete', (req, res) =>{
+  const {id} = req.params;
+  if (urlDatabase[id]) {
+    delete urlDatabase[id];
+    res.redirect('/urls');
+  } else {
+    res.status(404).send('URL not found!');
+  }
 });
 
 //  Generate a random strings
@@ -72,11 +87,9 @@ function generateRandomString() {
   return result;
 };
 
-//  GET route for the root path to send greetings to the browser.
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
