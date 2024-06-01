@@ -17,13 +17,15 @@
 </head>
 <body class="text-center">
   <%- include('partials/_header') %>
-    <h1>URL Details</h1> 
-    <p>Short URL: <%= id %></p>
-    <p>Long URL: <%= longURL %></p>
-    <a href="/urls/new">Create New URL</a>
+    <h4>TinyURL for http://<%= longURL %></h4>
+    <!--<h1>URL Details</h1> -->
+    <p>Short URL ID: <%= id %></p>
+    <!--<p>Long URL: <%= longURL %></p>-->
+    <!-- <a href="/urls/new">Create New URL</a> -->
+    <!--<p>Short URL ID: <%= id %></p>-->
     <form class="form-inline" action="/urls/<%= id %>" method="POST">
       <div class="form-group mb-2">
-        <label for="longURL">Edit URL:</label>
+        <label for="longURL">New URL:</label>
         <input
           class="form-control"
           type="text"
