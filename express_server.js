@@ -40,7 +40,7 @@ app.get('/urls/:id', (req, res) => {
   const longURL = urlDatabase[myID];
   if (longURL) {
     const templateVars = {id: myID, longURL: urlDatabase[myID]};
-    res.render('urls_shows', templateVars);
+    res.render('urls_show', templateVars);
   } else {
     res.status(404).send('This short URL does not exist.');
   }
