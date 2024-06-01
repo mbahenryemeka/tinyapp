@@ -20,7 +20,7 @@ app.get('/urls/new', (req, res) =>{
 
 // GET route to render the urls_index.ejs template.
 app.get('/urls', (req, res) => {
-  const templateVars = {urls: urlDatabase};
+  const templateVars = {urls: urlDatabase}; 
   res.render('urls_index', templateVars);
 });
 
@@ -65,6 +65,15 @@ app.post('/urls', (req, res) =>{
   urlDatabase[shortURL] = longURL; 
   res.redirect(`/urls/${shortURL}`);
 });
+
+app.post('/login',(req, res) =>{
+  // get the username from req.body
+  const username = req.body.username;
+  // save the username to cookie using res.cookie
+  res.cookie('username', username);
+  // redirect to the urs page using res.redirect
+  res.redirect('/urls');
+})
 
 // POST route to edit URL
 app.post('/urls/:id', (req, res) =>{
