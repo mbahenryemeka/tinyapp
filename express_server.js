@@ -65,6 +65,19 @@ app.post('/urls', (req, res) =>{
   urlDatabase[shortURL] = longURL; 
   res.redirect(`/urls/${shortURL}`);
 });
+
+// POST route to edit URL
+app.post('/urls/:id', (req, res) =>{
+  const {id} = req.params;
+  const longURL = req.body.longURL;
+  if (urlDatabase[id]) {
+     urlDatabase[id] = longURL;
+    res.redirect('/urls');
+  } else {
+    res.status(404).send('URL not found!');
+  }
+});
+
 // POST route to delete short URL from the urlDatabase.
 app.post('/urls/:id/delete', (req, res) =>{
   const {id} = req.params;
@@ -75,6 +88,7 @@ app.post('/urls/:id/delete', (req, res) =>{
     res.status(404).send('URL not found!');
   }
 });
+
 
 //  Generate a random strings
 function generateRandomString() {
