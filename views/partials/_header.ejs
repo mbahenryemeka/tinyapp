@@ -11,12 +11,31 @@
       aria-label="Toggle navigation"
     >
       <span class="navbar-toggler-icon"></span>
-    </button>
+    </button>    
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+        <div class=" float-right" >
+          <form class="form-inline" action="/urls" method="POST">
+            <div class="form-group mb-2">
+              <label class="d-none" for="username">Login</label>
+              <input
+                class="form-control"
+                type="text"
+                name="username"
+                id="username"
+                placeholder="username"
+                />
+              <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+          </form>
+        </div>
       </div>
+      
     </div>
   </nav>
+
 </header>
+
+<!--Similar to our form in Updating URLs, this form should contain: - a single text input element with the attribute name="username" - a submit button to submit the form-->
