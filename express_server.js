@@ -4,16 +4,20 @@ const app = express();
 const morgan = require('morgan');
 const PORT = 8080; // default port 8080
 
-app.use(cookieParser())
+//  configurations
 app.set("view engine", "ejs");
+
+// middlewares 
+app.use(express.urlencoded({extended: true}));
+app.use(morgan('dev'));
+app.use(cookieParser());
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
 };
 
-// middleware to convert the request body into string that we can read.
-app.use(express.urlencoded({extended: true}));
+
 
 //  GET route to render the urls_new.ejs template.
 app.get('/urls/new', (req, res) =>{
@@ -80,6 +84,11 @@ app.post('/login',(req, res) =>{
   // redirect to the urs page using res.redirect
   res.redirect('/urls');
 })
+
+app.post('/logout', (req, res)=> {
+  res.clearCookie('username');
+  res.redirect('/urls');
+});
 
 // POST route to edit URL
 app.post('/urls/:id', (req, res) =>{
