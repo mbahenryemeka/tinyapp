@@ -17,6 +17,24 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com",
 };
 
+//  Generate a random strings
+function generateRandomString() {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for (let i = 0; i<6; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
+
+// GET route for registration
+app.get('/register', (req, res)=> {
+  res.render('register');
+})
+
+
+
 
 
 //  GET route to render the urls_new.ejs template.
@@ -114,16 +132,7 @@ app.post('/urls/:id/delete', (req, res) =>{
 });
 
 
-//  Generate a random strings
-function generateRandomString() {
-  let result = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const charactersLength = characters.length;
-  for (let i = 0; i<6; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-};
+
 
 
 
