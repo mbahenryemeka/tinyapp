@@ -2,12 +2,12 @@ const express = require("express");
 const cookieParser = require('cookie-parser');
 const app = express();
 const morgan = require('morgan');
-const PORT = 8080; // default port 8080
+const PORT = 8080; //  default port 8080
 
 //  configurations
 app.set("view engine", "ejs");
 
-// middlewares 
+//  middlewares 
 app.use(express.urlencoded({extended: true}));
 app.use(morgan('dev'));
 app.use(cookieParser());
@@ -15,6 +15,20 @@ app.use(cookieParser());
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
+};
+
+//  create user object
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
 };
 
 //  Generate a random strings
@@ -28,26 +42,59 @@ function generateRandomString() {
   return result;
 };
 
-// GET route for registration
+//  GET route for registration to render the register.ejs template.
 app.get('/register', (req, res)=> {
   res.render('register');
 })
 
+//  POST route to submit registration form
+app.post('/register', (req, res)=>{
+  const email = req.body.email;
+  const password = req.body.password;
+//  email and password must be provided 
+  if (!email || !password) {
+    return res.status(400).send('you must provide an email and a password');
+  }
+  let foundUser = null;
+// happy path after providing email and password
+  for (const userId in users) {
+    const user = users[userId];
+//  check the availability of the email
+    if (user.email === email) {
+      foundUser = user;
+    }
+  }
+  if (foundUser) {
+    return res.status(404).send('that email is already in use');
+  }
+//  happy path
+  const id = generateRandomString();
 
+  const newUser = {
+    id: id,
+    email: email,
+    password: password
+  }
 
+//  add newUser to the users
+  users[id] = newUser;
+  res.cookie('user_id', id)
+  res.redirect('/urls');
+
+});
 
 
 //  GET route to render the urls_new.ejs template.
 app.get('/urls/new', (req, res) =>{
-  const username = req.cookies['username'];
-  const templateVars = { username }; 
+  const user = users[req.cookies['user_id']];
+  const templateVars = { user }; 
   res.render('urls_new', templateVars);
 });
 
 // GET route to render the urls_index.ejs template.
 app.get('/urls', (req, res) => {
-  const username = req.cookies['username'];
-  const templateVars = {urls: urlDatabase, username }; 
+  const user = users[req.cookies['user_id']];
+  const templateVars = {urls: urlDatabase, user }; 
   res.render('urls_index', templateVars);
 });
 
@@ -63,11 +110,11 @@ app.get('/hello', (req, res) => {
 
 //  GET route that receives a POST request to /urls it responds with a redirection to /urls/:id.
 app.get('/urls/:id', (req, res) => {
-  const username = req.cookies['username'];
+  const user = users[req.cookies['user_id']];
   const myID = req.params.id;
   const longURL = urlDatabase[myID];
   if (longURL) {
-    const templateVars = {id: myID, longURL: urlDatabase[myID], username};
+    const templateVars = {id: myID, longURL: urlDatabase[myID], user};
     res.render('urls_show', templateVars);
   } else {
     res.status(404).send('This short URL does not exist.');
@@ -104,7 +151,7 @@ app.post('/login',(req, res) =>{
 })
 
 app.post('/logout', (req, res)=> {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect('/urls');
 });
 
