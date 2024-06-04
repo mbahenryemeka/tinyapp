@@ -1,3 +1,4 @@
+const getUserByEmail = require('/helpers.js')
 const express = require("express");
 const cookieSession = require('cookie-session')
 const app = express();
@@ -44,18 +45,6 @@ const users = {
     password: bcrypt.hashSync("dishwasher-funk",10),
   },
 };
-
-//  function to get user by their email.
-const getUserByEmail = (email)=>{
-  for (const userid in users) {
-    const user = users[userid];
-    if (user.email === email) {
-      return user;  //  function returns user if the email exist.
-    }
-  }
-  return null;  //  if email does not exits, return null.
-};
-
 
 //  Generate a random strings
 function generateRandomString() {
