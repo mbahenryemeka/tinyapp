@@ -7,7 +7,7 @@ const PORT = 8080; //  default port 8080
 //  configurations
 app.set("view engine", "ejs");
 
-//  middlewares 
+//  middlewares
 app.use(express.urlencoded({extended: true}));
 app.use(morgan('dev'));
 app.use(cookieParser());
@@ -32,58 +32,57 @@ const users = {
 };
 
 const getUserByEmail = (email)=>{
-//  function returns user if the email exist.
-//  if email does not exits, return null.
-}
+  for (const userid in users) {
+    const user = users[userid];
+    if (user.email === email) {
+      return user;  //  function returns user if the email exist.
+    }
+  }
+  return null;  //  if email does not exits, return null.
+};
+
 
 //  Generate a random strings
 function generateRandomString() {
   let result = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const charactersLength = characters.length;
-  for (let i = 0; i<6; i++) {
+  for (let i = 0; i < 6; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
-};
+}
 
 //  GET route for registration to render the register.ejs template.
 app.get('/register', (req, res)=> {
   res.render('register');
-})
+});
 
 //  POST route to submit registration form
 app.post('/register', (req, res)=>{
   const email = req.body.email;
   const password = req.body.password;
-//  email and password must be provided 
+  //  email and password must be provided
   if (!email || !password) {
     return res.status(400).send('you must provide an email and a password');
   }
-  let foundUser = null;
-// happy path after providing email and password
-  for (const userId in users) {
-    const user = users[userId];
-//  check the availability of the email
-    if (user.email === email) {
-      foundUser = user;
-    }
-  }
+  let foundUser = getUserByEmail(email);
+
   if (foundUser) {
     return res.status(400).send('that email is already in use');
   }
-//  happy path
+  //  happy path
   const id = generateRandomString();
 
   const newUser = {
     id: id,
     email: email,
     password: password
-  }
+  };
 
-//  add newUser to the users
+  //  add newUser to the users
   users[id] = newUser;
-  res.cookie('user_id', id)
+  res.cookie('user_id', id);
   res.redirect('/urls');
 
 });
@@ -91,19 +90,19 @@ app.post('/register', (req, res)=>{
 //  GET route for login
 app.get('/login', (req, res)=>{
   res.render('login');
-})
+});
 
 //  GET route to render the urls_new.ejs template.
 app.get('/urls/new', (req, res) =>{
   const user = users[req.cookies['user_id']];
-  const templateVars = { user }; 
+  const templateVars = { user };
   res.render('urls_new', templateVars);
 });
 
 // GET route to render the urls_index.ejs template.
 app.get('/urls', (req, res) => {
   const user = users[req.cookies['user_id']];
-  const templateVars = {urls: urlDatabase, user }; 
+  const templateVars = {urls: urlDatabase, user };
   res.render('urls_index', templateVars);
 });
 
@@ -133,7 +132,7 @@ app.get('/urls/:id', (req, res) => {
 //  GET route for shareable short url.
 app.get("/u/:id", (req, res) => {
   const myID = req.params.id;
-  const longURL = urlDatabase[myID]
+  const longURL = urlDatabase[myID];
   res.redirect(longURL);
 });
 
@@ -146,9 +145,10 @@ app.get("/", (req, res) => {
 app.post('/urls', (req, res) =>{
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = longURL; 
+  urlDatabase[shortURL] = longURL;
   res.redirect(`/urls/${shortURL}`);
 });
+
 
 app.post('/login',(req, res) =>{
   // get the email and the password from req.body
@@ -156,30 +156,22 @@ app.post('/login',(req, res) =>{
   const password = req.body.password;
 
   if (!email || !password) {
-   return res.status(400).send('email and password needed');
+    return res.status(400).send('email and password needed');
   }
 
-  let foundUser = null;
-  for (const userid in users) {
-    let user = users[userid];
-
-    if (user.email === email) {
-      foundUser = user;
-      break;
-    }
-  } 
+  let foundUser = getUserByEmail(email);
   if (!foundUser) {
     return res.status(404).send('user not found');
   }
   //  check the password when user found.
-  if (foundUser.password !== password){
+  if (foundUser.password !== password) {
     return res.status(401).send('wrong password');
   }
-//  save the id to cookie using res.cookie
+  //  save the id to cookie using res.cookie
   res.cookie('user_id', foundUser.id);
-//  redirect to the urls page using res.redirect
+  //  redirect to the urls page using res.redirect
   res.redirect('/urls');
-})
+});
 
 //  Handles logout and clears the cookie
 app.post('/logout', (req, res)=> {
@@ -192,7 +184,7 @@ app.post('/urls/:id', (req, res) =>{
   const {id} = req.params;
   const longURL = req.body.longURL;
   if (urlDatabase[id]) {
-     urlDatabase[id] = longURL;
+    urlDatabase[id] = longURL;
     res.redirect('/urls');
   } else {
     res.status(404).send('URL not found!');
