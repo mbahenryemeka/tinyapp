@@ -13,8 +13,14 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW",
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW",
+  },
 };
 
 //  create user object
@@ -57,8 +63,8 @@ function generateRandomString() {
 app.get('/register', (req, res)=> {
   const user = users[req.cookies['user_id']];
   if (user) {
-    res.redirect('/urls');
-    return;
+    return res.redirect('/urls');
+   
   }
   const templateVars = {user:null};
   res.render('register', templateVars);
@@ -117,6 +123,7 @@ app.get('/urls/new', (req, res) =>{
 
 // GET route to render the urls_index.ejs template.
 app.get('/urls', (req, res) => {
+
   const user = users[req.cookies['user_id']];
   const templateVars = {urls: urlDatabase, user };
   res.render('urls_index', templateVars);
@@ -138,7 +145,7 @@ app.get('/urls/:id', (req, res) => {
   const myID = req.params.id;
   const longURL = urlDatabase[myID];
   if (longURL) {
-    const templateVars = {id: myID, longURL: urlDatabase[myID], user};
+    const templateVars = {id: myID, longURL: urlDatabase[myID].longURL, user};
     res.render('urls_show', templateVars);
   } else {
     res.status(404).send('This short URL does not exist.');
@@ -164,7 +171,11 @@ app.get("/", (req, res) => {
 app.post('/urls', (req, res) =>{
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = longURL;
+  const user = users[req.cookies['user_id']];
+  urlDatabase[shortURL] = {
+    longURL: longURL,
+    userID: user.id
+  };
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -203,7 +214,7 @@ app.post('/urls/:id', (req, res) =>{
   const {id} = req.params;
   const longURL = req.body.longURL;
   if (urlDatabase[id]) {
-    urlDatabase[id] = longURL;
+    urlDatabase[id].longURL = longURL;
     res.redirect('/urls');
   } else {
     res.status(404).send('URL not found!');
