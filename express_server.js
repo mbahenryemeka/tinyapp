@@ -55,7 +55,8 @@ function generateRandomString() {
 
 //  GET route for registration to render the register.ejs template.
 app.get('/register', (req, res)=> {
-  res.render('register');
+  const templateVars = {user:null};
+  res.render('register', templateVars);
 });
 
 //  POST route to submit registration form
@@ -89,7 +90,8 @@ app.post('/register', (req, res)=>{
 
 //  GET route for login
 app.get('/login', (req, res)=>{
-  res.render('login');
+  const templateVars = {user:null}
+  res.render('login', templateVars);
 });
 
 //  GET route to render the urls_new.ejs template.
