@@ -12,6 +12,14 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({extended: true}));
 app.use(morgan('dev'));
 app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['key'],
+
+  // Cookie Options
+  maxAge: 4 * 7 * 24 * 60 * 60 * 1000 // 1 month
+}))
+
 
 const urlDatabase = {
   b6UTxQ: {
