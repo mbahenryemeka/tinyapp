@@ -55,6 +55,11 @@ function generateRandomString() {
 
 //  GET route for registration to render the register.ejs template.
 app.get('/register', (req, res)=> {
+  const user = users[req.cookies['user_id']];
+  if (user) {
+    res.redirect('/urls');
+    return;
+  }
   const templateVars = {user:null};
   res.render('register', templateVars);
 });
@@ -90,6 +95,12 @@ app.post('/register', (req, res)=>{
 
 //  GET route for login
 app.get('/login', (req, res)=>{
+//  check if user is logged in 
+  const user = users[req.cookies['user_id']];
+  if (user) {
+    res.redirect('/urls');
+    return;
+  }
   const templateVars = {user:null}
   res.render('login', templateVars);
 });
@@ -97,6 +108,9 @@ app.get('/login', (req, res)=>{
 //  GET route to render the urls_new.ejs template.
 app.get('/urls/new', (req, res) =>{
   const user = users[req.cookies['user_id']];
+  if (!user) {
+    res.redirect('/login')
+  }
   const templateVars = { user };
   res.render('urls_new', templateVars);
 });
@@ -134,6 +148,9 @@ app.get('/urls/:id', (req, res) => {
 //  GET route for shareable short url.
 app.get("/u/:id", (req, res) => {
   const myID = req.params.id;
+  if (!urlDatabase[myID]) {
+   return res.status(404).send('invalid id')
+  }
   const longURL = urlDatabase[myID];
   res.redirect(longURL);
 });
