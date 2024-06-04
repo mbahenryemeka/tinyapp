@@ -31,6 +31,11 @@ const users = {
   },
 };
 
+const getUserByEmail = (email)=>{
+//  function returns user if the email exist.
+//  if email does not exits, return null.
+}
+
 //  Generate a random strings
 function generateRandomString() {
   let result = '';
@@ -65,7 +70,7 @@ app.post('/register', (req, res)=>{
     }
   }
   if (foundUser) {
-    return res.status(404).send('that email is already in use');
+    return res.status(400).send('that email is already in use');
   }
 //  happy path
   const id = generateRandomString();
@@ -146,14 +151,37 @@ app.post('/urls', (req, res) =>{
 });
 
 app.post('/login',(req, res) =>{
-  // get the username from req.body
-  const username = req.body.username;
-  // save the username to cookie using res.cookie
-  res.cookie('username', username);
-  // redirect to the urs page using res.redirect
+  // get the email and the password from req.body
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if (!email || !password) {
+   return res.status(400).send('email and password needed');
+  }
+
+  let foundUser = null;
+  for (const userid in users) {
+    let user = users[userid];
+
+    if (user.email === email) {
+      foundUser = user;
+      break;
+    }
+  } 
+  if (!foundUser) {
+    return res.status(404).send('user not found');
+  }
+  //  check the password when user found.
+  if (foundUser.password !== password){
+    return res.status(401).send('wrong password');
+  }
+//  save the id to cookie using res.cookie
+  res.cookie('user_id', foundUser.id);
+//  redirect to the urls page using res.redirect
   res.redirect('/urls');
 })
 
+//  Handles logout and clears the cookie
 app.post('/logout', (req, res)=> {
   res.clearCookie('user_id');
   res.redirect('/urls');
