@@ -3,22 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap CSS -->
+  <link
+  rel="stylesheet"
+  href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+  integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+  crossorigin="anonymous"
+/>
   <title>Login Page</title>
 </head>
 <body>
-  <h1>login below</h1>
-  <form action="/login" method="post">
+  <%- include('partials/_header') %>
+  <h1 class="ml-3">login</h1>
+  <form action="/login" class="form-group ml-3" method="post">
     <label>Email</label>
+    <br/>
     <input 
     name="email"
     type="email"/>
     <br/>
     <label>Password</label>
+    <br/>
     <input 
     name="password"
     type="password"/>
     <br/>
-    <button type="submit">login!</button>
+    <br/>
+    <button type="submit" class = "btn btn-primary">login</button>
   </form>
 </body>
 </html>

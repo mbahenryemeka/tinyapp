@@ -13,13 +13,13 @@
       <span class="navbar-toggler-icon"></span>
     </button>    
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
+      <div class="w-full navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-        <div class=" float-right" >
+        <div class="float-right ml-auto">
           <% if (!user) {%>
             <form action="/register" method="GET" style="display: inline;">
-              <button type="submit" class="btn btn-primary">Register!</button>
+              <button type="submit" class="btn btn-primary">Register</button>
             </form>
             <form action="/login" method="GET" style="display: inline;">
               <button type="submit" class="btn btn-primary">Login</button>
