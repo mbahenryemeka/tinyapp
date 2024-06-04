@@ -11,14 +11,13 @@ app.set("view engine", "ejs");
 //  middlewares
 app.use(express.urlencoded({extended: true}));
 app.use(morgan('dev'));
-app.use(cookieParser());
 app.use(cookieSession({
   name: 'session',
   keys: ['key'],
 
   // Cookie Options
   maxAge: 4 * 7 * 24 * 60 * 60 * 1000 // 1 month
-}))
+}));
 
 
 const urlDatabase = {
@@ -46,6 +45,7 @@ const users = {
   },
 };
 
+//  function to get user by their email.
 const getUserByEmail = (email)=>{
   for (const userid in users) {
     const user = users[userid];
@@ -68,9 +68,11 @@ function generateRandomString() {
   return result;
 }
 
+
 //  GET route for registration to render the register.ejs template.
 app.get('/register', (req, res)=> {
-  const user = users[req.cookies['user_id']];
+  const user = req.session.user_id;
+  //const user = users[req.cookies['user_id']];
   if (user) {
     return res.redirect('/urls');
    
@@ -78,6 +80,7 @@ app.get('/register', (req, res)=> {
   const templateVars = {user:null};
   res.render('register', templateVars);
 });
+
 
 //  POST route to submit registration form
 app.post('/register', (req, res)=>{
@@ -98,23 +101,21 @@ app.post('/register', (req, res)=>{
   const newUser = {
     id: id,
     email: email,
-    password: bycrpt.hashSync(password, 10),
+    password: bcrypt.hashSync(password, 10),
   };
 
   //  add newUser to the users
   users[id] = newUser;
-  res.cookie('user_id', id);
+  req.session.user_id = id
   res.redirect('/urls');
-
 });
 
 //  GET route for login
 app.get('/login', (req, res)=>{
-//  check if user is logged in 
-  const user = users[req.cookies['user_id']];
+  //  check if user is logged in 
+  const user = req.session.user_id;
   if (user) {
-    res.redirect('/urls');
-    return;
+    return res.redirect('/urls');    
   }
   const templateVars = {user:null}
   res.render('login', templateVars);
@@ -122,7 +123,7 @@ app.get('/login', (req, res)=>{
 
 //  GET route to render the urls_new.ejs template.
 app.get('/urls/new', (req, res) =>{
-  const user = users[req.cookies['user_id']];
+  const user = req.session.user_id;
   if (!user) {
     res.redirect('/login')
   }
@@ -132,8 +133,7 @@ app.get('/urls/new', (req, res) =>{
 
 // GET route to render the urls_index.ejs template.
 app.get('/urls', (req, res) => {
-
-  const user = users[req.cookies['user_id']];
+  const user = req.session.user_id;
   const templateVars = {urls: urlDatabase, user };
   res.render('urls_index', templateVars);
 });
@@ -150,7 +150,8 @@ app.get('/hello', (req, res) => {
 
 //  GET route that receives a POST request to /urls it responds with a redirection to /urls/:id.
 app.get('/urls/:id', (req, res) => {
-  const user = users[req.cookies['user_id']];
+  //const user = users[req.cookies['user_id']];
+  const user = req.session.user_id;
   const myID = req.params.id;
   const longURL = urlDatabase[myID];
   if (longURL) {
@@ -180,7 +181,8 @@ app.get("/", (req, res) => {
 app.post('/urls', (req, res) =>{
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
-  const user = users[req.cookies['user_id']];
+  //const user = users[req.cookies['user_id']];
+  const user = req.session.user_id;
   urlDatabase[shortURL] = {
     longURL: longURL,
     userID: user.id
@@ -208,15 +210,14 @@ app.post('/login',(req, res) =>{
   if (!bcrypt.compareSync(plainTextPasswordFromForm, hashedPasswordFromDatabase)) {
     return res.status(401).send('Wrong password');
   }   
-  //  save the id to cookie using res.cookie
-  res.cookie('user_id', foundUser.id);
-  //  redirect to the urls page using res.redirect
+  req.session.user_id = foundUser.id;
+ //  redirect to the urls page using res.redirect
   res.redirect('/urls');
 });
 
 //  Handles logout and clears the cookie
 app.post('/logout', (req, res)=> {
-  res.clearCookie('user_id');
+  req.session = null;
   res.redirect('/urls');
 });
 
@@ -246,4 +247,3 @@ app.post('/urls/:id/delete', (req, res) =>{
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
