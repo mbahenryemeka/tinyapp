@@ -2,6 +2,7 @@ const express = require("express");
 const cookieParser = require('cookie-parser');
 const app = express();
 const morgan = require('morgan');
+const bcrypt = require("bcryptjs");
 const PORT = 8080; //  default port 8080
 
 //  configurations
@@ -28,12 +29,12 @@ const users = {
   userRandomID: {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur",
+    password: bcrypt.hashSync("purple-monkey-dinosaur", 10),
   },
   user2RandomID: {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher-funk",
+    password: bcrypt.hashSync("dishwasher-funk",10),
   },
 };
 
@@ -193,10 +194,12 @@ app.post('/login',(req, res) =>{
   if (!foundUser) {
     return res.status(404).send('user not found');
   }
+  const plainTextPasswordFromForm = password;
+  const hashedPasswordFromDatabase = foundUser.password
   //  check the password when user found.
-  if (foundUser.password !== password) {
-    return res.status(401).send('wrong password');
-  }
+  if (!bcrypt.compareSync(plainTextPasswordFromForm, hashedPasswordFromDatabase)) {
+    return res.status(401).send('Wrong password');
+  }   
   //  save the id to cookie using res.cookie
   res.cookie('user_id', foundUser.id);
   //  redirect to the urls page using res.redirect
