@@ -90,7 +90,7 @@ app.post('/register', (req, res)=>{
   const newUser = {
     id: id,
     email: email,
-    password: password
+    password: bycrpt.hashSync(password, 10),
   };
 
   //  add newUser to the users
