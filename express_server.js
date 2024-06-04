@@ -83,6 +83,10 @@ app.post('/register', (req, res)=>{
 
 });
 
+//  GET route for login
+app.get('/login', (req, res)=>{
+  res.render('login');
+})
 
 //  GET route to render the urls_new.ejs template.
 app.get('/urls/new', (req, res) =>{
@@ -177,11 +181,6 @@ app.post('/urls/:id/delete', (req, res) =>{
     res.status(404).send('URL not found!');
   }
 });
-
-
-
-
-
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
