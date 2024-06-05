@@ -1,4 +1,4 @@
-const getUserByEmail = require('/helpers.js')
+const {getUserByEmail} = require('./helpers')
 const express = require("express");
 const cookieSession = require('cookie-session')
 const app = express();
@@ -79,7 +79,7 @@ app.post('/register', (req, res)=>{
   if (!email || !password) {
     return res.status(400).send('you must provide an email and a password');
   }
-  let foundUser = getUserByEmail(email);
+  let foundUser = getUserByEmail(email, users);
 
   if (foundUser) {
     return res.status(400).send('that email is already in use');
@@ -189,7 +189,7 @@ app.post('/login',(req, res) =>{
     return res.status(400).send('email and password needed');
   }
 
-  let foundUser = getUserByEmail(email);
+  let foundUser = getUserByEmail(email, users);
   if (!foundUser) {
     return res.status(404).send('user not found');
   }

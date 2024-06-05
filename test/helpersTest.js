@@ -27,3 +27,4 @@ describe('getUserByEmail', function() {
     assert.isNull(user, 'Function should return null for email not in database');
   });
 });
+
