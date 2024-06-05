@@ -8,4 +8,4 @@ const getUserByEmail = (email, database)=>{
   return null;  //  if email does not exits, return null.
 };
 
-module.exports = getUserByEmail();
+module.exports = {getUserByEmail};
