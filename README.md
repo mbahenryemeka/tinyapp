@@ -6,7 +6,7 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 !["Screenshot of URLs page](/home/labber/lighthouse/tinyapp/docs/urls-page.png.png)
 !["Screenshot of register page"](/home/labber/lighthouse/tinyapp/docs/register-page.png.png)
-!["screenshot of login page"](/home/labber/lighthouse/tinyapp/docs/login-page.png.png)
+!["screenshot of login page"]("C:\Users\mbahe\Desktop\login-page.png.png")
 
 ## Dependencies
 
