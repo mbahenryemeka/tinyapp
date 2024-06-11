@@ -1,6 +1,6 @@
-const {getUserByEmail} = require('./helpers')
+const {getUserByEmail} = require('./helpers');
 const express = require("express");
-const cookieSession = require('cookie-session')
+const cookieSession = require('cookie-session');
 const app = express();
 const morgan = require('morgan');
 const bcrypt = require("bcryptjs");
@@ -60,13 +60,18 @@ function generateRandomString() {
 
 //  GET route for registration to render the register.ejs template.
 app.get('/register', (req, res)=> {
-  const user = req.session.user_id;
-  //const user = users[req.cookies['user_id']];
+  const userId = req.session.userId;  
+  const user = users[userId];
+
+  const templateVars = {
+    user: user
+  };
+
   if (user) {
-    return res.redirect('/urls');
-   
+    res.redirect('/urls');
+    return;
   }
-  const templateVars = {user:null};
+
   res.render('register', templateVars);
 });
 
@@ -95,18 +100,25 @@ app.post('/register', (req, res)=>{
 
   //  add newUser to the users
   users[id] = newUser;
-  req.session.user_id = id
+  req.session.user_id = id;
   res.redirect('/urls');
 });
 
 //  GET route for login
 app.get('/login', (req, res)=>{
-  //  check if user is logged in 
-  const user = req.session.user_id;
+  //  check if user is logged in
+  const userId = req.session.userId;  
+  const user = users[userId];
+  
+  const templateVars = {
+    user: user
+  };
+
   if (user) {
-    return res.redirect('/urls');    
+    res.redirect('/urls');
+    return;
   }
-  const templateVars = {user:null}
+
   res.render('login', templateVars);
 });
 
@@ -114,7 +126,7 @@ app.get('/login', (req, res)=>{
 app.get('/urls/new', (req, res) =>{
   const user = req.session.user_id;
   if (!user) {
-    res.redirect('/login')
+    res.redirect('/login');
   }
   const templateVars = { user };
   res.render('urls_new', templateVars);
@@ -153,17 +165,24 @@ app.get('/urls/:id', (req, res) => {
 
 //  GET route for shareable short url.
 app.get("/u/:id", (req, res) => {
-  const myID = req.params.id;
-  if (!urlDatabase[myID]) {
-   return res.status(404).send('invalid id')
+  const shortURL = req.params.id;
+  const url = urlDatabase[shortURL];
+  if (!url) {
+    return res.status(404).send('this shorten url does not exist.');
   }
-  const longURL = urlDatabase[myID];
+  const longURL = url.longURL;
   res.redirect(longURL);
 });
 
 //  GET route for the root path to send greetings to the browser.
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  console.log(req.session);
+  const userId = req.session.user_id;
+  if (userId) {
+    return res.redirect('/urls');    
+  } else {
+    return res.redirect('/login');
+  }
 });
 
 //  POST route to handle the form submission.
@@ -194,13 +213,13 @@ app.post('/login',(req, res) =>{
     return res.status(404).send('user not found');
   }
   const plainTextPasswordFromForm = password;
-  const hashedPasswordFromDatabase = foundUser.password
+  const hashedPasswordFromDatabase = foundUser.password;
   //  check the password when user found.
   if (!bcrypt.compareSync(plainTextPasswordFromForm, hashedPasswordFromDatabase)) {
     return res.status(401).send('Wrong password');
-  }   
+  }
   req.session.user_id = foundUser.id;
- //  redirect to the urls page using res.redirect
+  //  redirect to the urls page using res.redirect
   res.redirect('/urls');
 });
 
@@ -213,6 +232,11 @@ app.post('/logout', (req, res)=> {
 // POST route to edit URL
 app.post('/urls/:id', (req, res) =>{
   const {id} = req.params;
+  const userId = req.session.user_id;
+  //if (!userId) {
+   // res.status(401).send('You must be logged in to edit this url');
+   // return;
+  //} 
   const longURL = req.body.longURL;
   if (urlDatabase[id]) {
     urlDatabase[id].longURL = longURL;

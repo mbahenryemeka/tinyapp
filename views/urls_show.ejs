@@ -17,9 +17,14 @@
 </head>
 <body class="text-center">
   <%- include('partials/_header') %>
-    <h4>TinyURL for http://<%= longURL %></h4>
+  <% if (!user) { %>
+    <div class="alert alert-danger" role="alert">
+      Please log in or register to view your URLs.
+    </div>
+  <% } else { %>        
+    <h4>TinyURL for <%= longURL %></h4>
     <!--<h1>URL Details</h1> -->
-    <p>Short URL ID: <%= id %></p>
+    <p>Short URL ID: <a href="/u/<%= id %>"><%= id %></a></p>
     <!--<p>Long URL: <%= longURL %></p>-->
     <!-- <a href="/urls/new">Create New URL</a> -->
     <!--<p>Short URL ID: <%= id %></p>-->
@@ -37,6 +42,7 @@
         <button type="submit" class="btn btn-primary">Update</button>
       </div>
     </form>
+    <% } %>
     <!-- Bootstrap JS -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"

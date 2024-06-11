@@ -12,7 +12,7 @@
   <title>Registration Page</title>
 </head>
 <body>
-  <%- include('partials/_header') %>
+  <%- include('partials/_header', { user: user }) %>
  <h1 class="ml-3">Registration Form</h1>
   <form action="/register" method="post" class="form-group ml-3">
     <label>email</label>

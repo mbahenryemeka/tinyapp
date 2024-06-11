@@ -13,7 +13,7 @@
   <title>Login Page</title>
 </head>
 <body>
-  <%- include('partials/_header') %>
+  <%- include('partials/_header', { user: user }) %>
   <h1 class="ml-3">login</h1>
   <form action="/login" class="form-group ml-3" method="post">
     <label>Email</label>
