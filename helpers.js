@@ -7,4 +7,16 @@ const getUserByEmail = (email, database)=>{
   }
   return null;  //  if email does not exits, return null.
 };
-module.exports = {getUserByEmail};
+
+//  Generate a random strings
+function generateRandomString() {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for (let i = 0; i < 6; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
+
+module.exports = {getUserByEmail, generateRandomString};
